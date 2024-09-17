@@ -1,6 +1,10 @@
 pipeline {
     agent any
     
+    tools {
+        nodejs "NodeJS-Tool" // The name you configured in Global Tool Configuration
+    }
+    
     stages {
         stage('Checkout') {
             steps {
@@ -10,8 +14,6 @@ pipeline {
         
         stage('Build') {
             steps {
-                sh 'node -v'
-                sh 'npm -v'
                 sh 'npm install'
             }
         }
@@ -25,7 +27,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying the application...'
-                // Add your deployment scripts here
             }
         }
     }
