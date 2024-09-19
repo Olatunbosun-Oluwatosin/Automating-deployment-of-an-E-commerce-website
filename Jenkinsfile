@@ -27,7 +27,7 @@ pipeline {
         stage('Push Docker Image to Registry') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+                    docker.withRegistry('https://index.docker.io/v1/', 'ef0373b9-d3d0-479b-80a5-3b1b11bd3c9f') {
                         dockerImage.push('latest')
                     }
                 }
