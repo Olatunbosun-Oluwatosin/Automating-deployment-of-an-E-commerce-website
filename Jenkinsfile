@@ -1,33 +1,43 @@
 pipeline {
     agent any
-    
-    tools {
-        nodejs "NodeJS-Tool" // The name you configured in Global Tool Configuration
-    }
-    
+
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Olatunbosun-Oluwatosin/Automating-deployment-of-an-E-commerce-website.git'
+                git 'https://github.com/Olatunbosun-Oluwatosin/Automating-deployment-of-an-E-commerce-website.git'
             }
         }
-        
-        stage('Build') {
+
+        stage('Build Docker Image') {
             steps {
-                sh 'npm install'
+                script {
+                    def dockerImage = docker.build("myapp:${env.BUILD_ID}")
+                }
             }
         }
-        
-        stage('Test') {
+
+        stage('Run Docker Container') {
             steps {
-                sh 'npm test'
+                script {
+                    dockerImage.run('-p 8080:80')
+                }
             }
         }
-        
-        stage('Deploy') {
+
+        stage('Push Docker Image to Registry') {
             steps {
-                echo 'Deploying the application...'
+                script {
+                    docker.withRegistry('https://index.docker.io/v1/', 'docker-hub-credentials') {
+                        dockerImage.push('latest')
+                    }
+                }
             }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
         }
     }
 }
