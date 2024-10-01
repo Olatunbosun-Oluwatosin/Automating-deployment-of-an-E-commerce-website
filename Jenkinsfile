@@ -39,7 +39,7 @@ pipeline {
                 script {
                     // Perform a basic check to see if the web app is accessible on port 9090
                     sh 'sleep 10'  // Allow some time for the container to start
-                    sh 'curl http://localhost:9090'
+                    sh 'curl http://localhost:8080'
                 }
             }
         }
