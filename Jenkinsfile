@@ -1,17 +1,24 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_REGISTRY = "docker.io"
+        IMAGE_NAME = "tosyeno/my-nginx"
+        IMAGE_TAG = "${env.BUILD_NUMBER}"
+        DOCKER_CREDENTIALS_ID = "docker_credentials_id"
+    }
+
     stages {
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                git 'https://github.com/Olatunbosun-Oluwatosin/Automating-deployment-of-an-E-commerce-website.git'
+                git branch: 'main', url: 'https://github.com/Olatunbosun-Oluwatosin/Automating-deployment-of-an-E-commerce-website.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    def dockerImage = docker.build("myapp:${env.BUILD_ID}")
+                    dockerImage = docker.build("${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}")
                 }
             }
         }
@@ -19,7 +26,16 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    dockerImage.run('-p 8080:80')
+                    dockerImage.run('-d -p 8080:80')
+                }
+            }
+        }
+
+        stage('Access Web Application') {
+            steps {
+                script {
+                    // You can add custom health checks here to ensure the app is running
+                    sh 'curl http://localhost:8080'
                 }
             }
         }
@@ -27,8 +43,8 @@ pipeline {
         stage('Push Docker Image to Registry') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'ef0373b9-d3d0-479b-80a5-3b1b11bd3c9f') {
-                        dockerImage.push('latest')
+                    docker.withRegistry("https://${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
+                        dockerImage.push("${IMAGE_TAG}")
                     }
                 }
             }
@@ -37,7 +53,13 @@ pipeline {
 
     post {
         always {
-            cleanWs()
+            cleanWs() // Clean workspace after build
+        }
+        success {
+            echo 'Build and deployment successful!'
+        }
+        failure {
+            echo 'Build or deployment failed!'
         }
     }
 }
