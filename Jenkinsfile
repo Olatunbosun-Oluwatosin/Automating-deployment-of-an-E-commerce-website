@@ -28,7 +28,7 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
-                    // Run the built Docker container, exposing the app on port 8080
+                    // Run the built Docker container, exposing the app on port 9090
                     dockerImage.run('-d -p 9090:80')
                 }
             }
@@ -37,9 +37,9 @@ pipeline {
         stage('Access Web Application') {
             steps {
                 script {
-                    // Perform a basic check to see if the web app is accessible on port 8080
+                    // Perform a basic check to see if the web app is accessible on port 9090
                     sh 'sleep 10'  // Allow some time for the container to start
-                    sh 'curl http://localhost:8080'
+                    sh 'curl http://localhost:9090'
                 }
             }
         }
