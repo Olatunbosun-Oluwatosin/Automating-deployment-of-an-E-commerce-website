@@ -44,16 +44,16 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image to Registry') {
-            steps {
-                script {
-                    // Log in to Docker Hub and push the Docker image to the registry
-                    docker.withRegistry("https://${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
-                        dockerImage.push("${IMAGE_TAG}")  // Push the image with the current build tag
-                    }
-                }
-            }
-        }
+        // stage('Push Docker Image to Registry') {
+        //     steps {
+        //         script {
+        //             // Log in to Docker Hub and push the Docker image to the registry
+        //             docker.withRegistry("https://${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
+        //                 dockerImage.push("${IMAGE_TAG}")  // Push the image with the current build tag
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     post {
