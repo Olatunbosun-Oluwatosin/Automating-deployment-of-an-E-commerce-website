@@ -5,7 +5,7 @@ pipeline {
         DOCKER_REGISTRY = "docker.io"
         IMAGE_NAME = "tosyeno/my-flask-app"  
         IMAGE_TAG = "${env.BUILD_NUMBER}"
-        DOCKER_CREDENTIALS_ID = "docker_credentials_id"
+        DOCKER_CREDENTIALS_ID = "ef0373b9-d3d0-479b-80a5-3b1b11bd3c9f"
     }
 
     stages {
