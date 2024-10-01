@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_REGISTRY = "docker.io"
-        IMAGE_NAME = "tosyeno/my-nginx"
+        IMAGE_NAME = "tosyeno/my-flask-app"  
         IMAGE_TAG = "${env.BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = "docker_credentials_id"
     }
@@ -11,6 +11,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
+                // Clone the repository that contains the Dockerfile and the source code
                 git branch: 'main', url: 'https://github.com/Olatunbosun-Oluwatosin/Automating-deployment-of-an-E-commerce-website.git'
             }
         }
@@ -18,6 +19,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
+                    // Build the Docker image using the Dockerfile in the cloned repository
                     dockerImage = docker.build("${DOCKER_REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}")
                 }
             }
@@ -26,6 +28,7 @@ pipeline {
         stage('Run Docker Container') {
             steps {
                 script {
+                    // Run the built Docker container, exposing the app on port 8080
                     dockerImage.run('-d -p 8080:80')
                 }
             }
@@ -34,7 +37,8 @@ pipeline {
         stage('Access Web Application') {
             steps {
                 script {
-                    // You can add custom health checks here to ensure the app is running
+                    // Perform a basic check to see if the web app is accessible on port 8080
+                    sh 'sleep 10'  // Allow some time for the container to start
                     sh 'curl http://localhost:8080'
                 }
             }
@@ -43,6 +47,7 @@ pipeline {
         stage('Push Docker Image to Registry') {
             steps {
                 script {
+                    // Push the Docker image to the registry
                     docker.withRegistry("https://${DOCKER_REGISTRY}", "${DOCKER_CREDENTIALS_ID}") {
                         dockerImage.push("${IMAGE_TAG}")
                     }
@@ -53,7 +58,7 @@ pipeline {
 
     post {
         always {
-            cleanWs() // Clean workspace after build
+            cleanWs() // Clean the workspace after build
         }
         success {
             echo 'Build and deployment successful!'
