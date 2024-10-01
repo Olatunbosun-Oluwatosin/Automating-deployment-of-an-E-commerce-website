@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     // Run the built Docker container, exposing the app on port 8080
-                    dockerImage.run('-d -p 8080:80')
+                    dockerImage.run('-d -p 9090:80')
                 }
             }
         }
